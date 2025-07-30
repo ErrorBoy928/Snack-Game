@@ -1,114 +1,129 @@
-const board = document.getElementById('game-board');
-const scoreDisplay = document.getElementById('score');
-const finalScore = document.getElementById('final-score');
-const menuScreen = document.getElementById('menu-screen');
-const gameScreen = document.getElementById('game-screen');
-const gameOverScreen = document.getElementById('game-over-screen');
-const startBtn = document.getElementById('start-btn');
-const restartBtn = document.getElementById('restart-btn');
-const controlButtons = document.querySelectorAll('.control-btn');
+// Basic variables
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+let box = 20;
+let snake = [];
+let direction = "RIGHT";
+let food;
+let score = 0;
+let game;
+let speed = 100;
+let snakeColor = "#0f0";
 
-const boardSize = 20;
-let snake, direction, food, score, gameInterval;
+// Load DOM elements
+const menu = document.getElementById("menu");
+const gameArea = document.getElementById("game-area");
+const startBtn = document.getElementById("startBtn");
+const restartBtn = document.getElementById("restartBtn");
+const backBtn = document.getElementById("backBtn");
+const scoreText = document.getElementById("score");
+const finalScore = document.getElementById("final-score");
+const highScoreText = document.getElementById("high-score");
+const gameOverScreen = document.getElementById("game-over-screen");
 
-startBtn.onclick = () => {
-  menuScreen.classList.add('hidden');
-  gameScreen.classList.remove('hidden');
-  startGame();
-};
-
-restartBtn.onclick = () => {
-  gameOverScreen.classList.add('hidden');
-  gameScreen.classList.remove('hidden');
-  startGame();
-};
-
-function startGame() {
-  snake = [{ x: 10, y: 10 }];
-  direction = { x: 1, y: 0 };
-  food = spawnFood();
-  score = 0;
-  scoreDisplay.textContent = "Score: 0";
-  draw();
-  clearInterval(gameInterval);
-  gameInterval = setInterval(gameLoop, 150);
+function randomFood() {
+  return {
+    x: Math.floor(Math.random() * (canvas.width / box)) * box,
+    y: Math.floor(Math.random() * (canvas.height / box)) * box
+  };
 }
 
-function draw() {
-  board.innerHTML = '';
-  for (let y = 0; y < boardSize; y++) {
-    for (let x = 0; x < boardSize; x++) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
+function drawGame() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (snake.some(seg => seg.x === x && seg.y === y)) {
-        cell.classList.add('snake');
-      } else if (food.x === x && food.y === y) {
-        cell.classList.add('food');
-      }
-
-      board.appendChild(cell);
-    }
-  }
-}
-
-function gameLoop() {
-  const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
-
-  if (
-    head.x < 0 || head.x >= boardSize ||
-    head.y < 0 || head.y >= boardSize ||
-    snake.some(seg => seg.x === head.x && seg.y === head.y)
-  ) {
-    return endGame();
+  for (let i = 0; i < snake.length; i++) {
+    ctx.fillStyle = i === 0 ? snakeColor : "#fff";
+    ctx.fillRect(snake[i].x, snake[i].y, box, box);
   }
 
-  snake.unshift(head);
+  ctx.fillStyle = "#f00";
+  ctx.fillRect(food.x, food.y, box, box);
 
-  if (head.x === food.x && head.y === food.y) {
+  let headX = snake[0].x;
+  let headY = snake[0].y;
+
+  if (direction === "LEFT") headX -= box;
+  if (direction === "RIGHT") headX += box;
+  if (direction === "UP") headY -= box;
+  if (direction === "DOWN") headY += box;
+
+  if (headX === food.x && headY === food.y) {
     score++;
-    scoreDisplay.textContent = "Score: " + score;
-    food = spawnFood();
+    food = randomFood();
   } else {
     snake.pop();
   }
 
-  draw();
+  let newHead = { x: headX, y: headY };
+
+  if (
+    headX < 0 || headY < 0 ||
+    headX >= canvas.width || headY >= canvas.height ||
+    collision(newHead, snake)
+  ) {
+    clearInterval(game);
+    showGameOver();
+    return;
+  }
+
+  snake.unshift(newHead);
+  scoreText.textContent = score;
+  if (score > (localStorage.getItem("highScore") || 0)) {
+    localStorage.setItem("highScore", score);
+  }
+  highScoreText.textContent = localStorage.getItem("highScore") || 0;
 }
 
-function spawnFood() {
-  let newFood;
-  do {
-    newFood = {
-      x: Math.floor(Math.random() * boardSize),
-      y: Math.floor(Math.random() * boardSize)
-    };
-  } while (snake.some(s => s.x === newFood.x && s.y === newFood.y));
-  return newFood;
+function collision(head, array) {
+  for (let i = 0; i < array.length; i++) {
+    if (head.x === array[i].x && head.y === array[i].y) return true;
+  }
+  return false;
 }
 
-// Arrow keys for desktop
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowUp' && direction.y === 0) direction = { x: 0, y: -1 };
-  if (e.key === 'ArrowDown' && direction.y === 0) direction = { x: 0, y: 1 };
-  if (e.key === 'ArrowLeft' && direction.x === 0) direction = { x: -1, y: 0 };
-  if (e.key === 'ArrowRight' && direction.x === 0) direction = { x: 1, y: 0 };
+function startGame() {
+  direction = "RIGHT";
+  score = 0;
+  snake = [];
+  snake[0] = { x: 9 * box, y: 10 * box };
+  food = randomFood();
+
+  speed = parseInt(document.getElementById("level").value);
+  snakeColor = document.getElementById("color").value;
+
+  menu.style.display = "none";
+  gameOverScreen.style.display = "none";
+  gameArea.style.display = "block";
+
+  game = setInterval(drawGame, speed);
+}
+
+function showGameOver() {
+  gameArea.style.display = "none";
+  gameOverScreen.style.display = "block";
+  finalScore.textContent = score;
+}
+
+startBtn.onclick = startGame;
+restartBtn.onclick = startGame;
+backBtn.onclick = () => {
+  gameOverScreen.style.display = "none";
+  menu.style.display = "block";
+};
+
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft" && direction !== "RIGHT") direction = "LEFT";
+  if (e.key === "ArrowUp" && direction !== "DOWN") direction = "UP";
+  if (e.key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
+  if (e.key === "ArrowDown" && direction !== "UP") direction = "DOWN";
 });
 
-// Touch buttons for mobile
-controlButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    const dir = button.dataset.dir;
-    if (dir === 'up' && direction.y === 0) direction = { x: 0, y: -1 };
-    if (dir === 'down' && direction.y === 0) direction = { x: 0, y: 1 };
-    if (dir === 'left' && direction.x === 0) direction = { x: -1, y: 0 };
-    if (dir === 'right' && direction.x === 0) direction = { x: 1, y: 0 };
+document.querySelectorAll(".ctrl").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const dir = btn.getAttribute("data-dir");
+    if (dir === "left" && direction !== "RIGHT") direction = "LEFT";
+    if (dir === "up" && direction !== "DOWN") direction = "UP";
+    if (dir === "right" && direction !== "LEFT") direction = "RIGHT";
+    if (dir === "down" && direction !== "UP") direction = "DOWN";
   });
 });
-
-function endGame() {
-  clearInterval(gameInterval);
-  gameScreen.classList.add('hidden');
-  gameOverScreen.classList.remove('hidden');
-  finalScore.textContent = "Score: " + score;
-}

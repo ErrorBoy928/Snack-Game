@@ -2,44 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Snake Game</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Snake Game</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <h1>🐍 Neon Snake</h1>
 
-  <!-- Main Menu -->
-  <div id="menu-screen">
-    <h1>🐍 Snake Game</h1>
-    <button id="start-btn">Start Game</button>
+  <div id="menu">
+    <label for="level">Choose Level Speed:</label>
+    <select id="level">
+      <option value="200">Easy</option>
+      <option value="150">Medium</option>
+      <option value="100" selected>Hard</option>
+    </select>
+
+    <label for="color">Choose Snake Color:</label>
+    <select id="color">
+      <option value="#0f0" selected>Green</option>
+      <option value="#f0f">Magenta</option>
+      <option value="#0ff">Cyan</option>
+      <option value="#ff0">Yellow</option>
+    </select>
+
+    <button id="startBtn"> Start Game</button>
   </div>
 
-  <!-- Game Area -->
-  <div id="game-screen" class="hidden">
-    <h1>🐍 Snake Game</h1>
-    <div id="game-board"></div>
-    <p id="score">Score: 0</p>
-  </div>
-
-  <!-- Game Over -->
-  <div id="game-over-screen" class="hidden">
-    <h2>💀 Game Over</h2>
-    <p id="final-score">Score: 0</p>
-    <button id="restart-btn">Restart</button>
-  </div>
-
-  <!-- Mobile Controls -->
-  <div id="touch-controls">
-    <div class="row">
-      <button class="control-btn" data-dir="up">⬆️</button>
+  <div id="game-area" style="display: none;">
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="score-board">
+      <div>Score: <span id="score">0</span></div>
+      <div>High Score: <span id="high-score">0</span></div>
     </div>
-    <div class="row">
-      <button class="control-btn" data-dir="left">⬅️</button>
-      <button class="control-btn" data-dir="down">⬇️</button>
-      <button class="control-btn" data-dir="right">➡️</button>
+
+    <div class="mobile-controls">
+      <button class="ctrl" data-dir="up">⬆️</button>
+      <div>
+        <button class="ctrl" data-dir="left">⬅️</button>
+        <button class="ctrl" data-dir="down">⬇️</button>
+        <button class="ctrl" data-dir="right">➡️</button>
+      </div>
     </div>
   </div>
 
-  <script src="script.js" defer></script>
+  <div id="game-over-screen" style="display: none;">
+    <h2>💀 Game Over!</h2>
+    <p>Your Score: <span id="final-score">0</span></p>
+    <button id="restartBtn">🔁 Restart</button>
+    <button id="backBtn">🔙 Back to Menu</button>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
