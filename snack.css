@@ -1,0 +1,116 @@
+body {
+  margin: 0;
+  background: black;
+  font-family: 'Courier New', monospace;
+  color: #0ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #0ff;
+  text-shadow: 0 0 15px #0ff;
+}
+
+#menu {
+  margin-top: 50px;
+  text-align: center;
+}
+
+label, select {
+  display: block;
+  margin: 15px auto;
+  font-size: 1.2rem;
+}
+
+select {
+  padding: 8px;
+  border: none;
+  background: #111;
+  color: #0ff;
+  box-shadow: 0 0 10px #0ff;
+}
+
+button {
+  padding: 10px 20px;
+  margin-top: 20px;
+  font-size: 1.2rem;
+  background: transparent;
+  border: 2px solid #0ff;
+  color: #0ff;
+  cursor: pointer;
+  box-shadow: 0 0 15px #0ff;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #0ff;
+  color: black;
+}
+
+canvas {
+  margin-top: 20px;
+  border: 2px solid #0ff;
+  background: #111;
+  box-shadow: 0 0 15px #0ff;
+}
+
+.score-board {
+  display: flex;
+  gap: 40px;
+  margin-top: 20px;
+  font-size: 1.2rem;
+  text-shadow: 0 0 5px #0ff;
+}
+
+.mobile-controls {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-controls button.ctrl {
+  font-size: 1.5rem;
+  padding: 10px;
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  border: 2px solid #0ff;
+  background: black;
+  color: #0ff;
+  box-shadow: 0 0 10px #0ff;
+}
+
+.mobile-controls div {
+  display: flex;
+  gap: 10px;
+}
+
+#game-over-screen {
+  text-align: center;
+  margin-top: 40px;
+  color: #f0f;
+  text-shadow: 0 0 10px #f0f;
+}
+
+#game-over-screen button {
+  display: block;
+  margin: 10px auto;
+  font-size: 1.1rem;
+  padding: 10px 25px;
+  border: 2px solid #f0f;
+  background: transparent;
+  color: #f0f;
+  box-shadow: 0 0 10px #f0f;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#game-over-screen button:hover {
+  background: #f0f;
+  color: black;
+}
